@@ -1,0 +1,25 @@
+version: '3'
+services:
+    user-srv:
+        build: .
+        container_name: "user-srv"
+        ports:
+            - 8080:8080
+        depends_on:
+            - mongodb
+    mongodb:
+        image: "mongo:latest"
+        container_name: "mongodb_container"
+        ports:
+            - 27017:27017
+        environment: 
+            - MONGO_INITDB_DATABASE=comunik
+            - MONGO_INITDB_ROOT_USERNAME=user
+            - MONGO_INITDB_ROOT_PASSWORD=user
+        volumes:
+             # seeding scripts
+             - ./init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
+            # named volumes
+             - ./mongodb:/data/db
+volumes:
+    mongodb:
