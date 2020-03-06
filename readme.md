@@ -1,4 +1,4 @@
- Expample from the scratch of microservice using golang , mongodb , go-gin as http router 
+Microservice from the scratch using golang , mongodb and go-gin as http router 
 
 1 - Delete go mod file then go mod init github.com/YourUserName/project-name
  
