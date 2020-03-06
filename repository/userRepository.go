@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"sync"
 
 	"github.com/communik/user-srv/helper"
 	"github.com/communik/user-srv/model"
@@ -12,6 +13,7 @@ import (
 
 type userRepo struct {
 	db *mongo.Database
+	mu sync.RWMutex
 }
 
 //RepositoryInterface interface
@@ -25,11 +27,13 @@ func NewUserRepo(db *mongo.Database) userRepo {
 }
 
 func (u userRepo) Create(ctx context.Context, user model.User) (string, error) {
+	u.mu.Lock()
 	res, err := u.db.Collection("user").InsertOne(ctx, bson.D{
 		{"userName", user.UserName},
 		{"createdAt", primitive.DateTime(helper.TimeToMillis(user.CreatedAt))},
 		{"modifiedAt", primitive.DateTime(helper.TimeToMillis(user.ModifiedAt))},
 	})
+	u.mu.Unlock()
 	if err != nil {
 		return "", err
 	}
