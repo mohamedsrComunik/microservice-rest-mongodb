@@ -13,6 +13,12 @@ type handler struct {
 	repo repository.RepositoryInterface
 }
 
+// HandlerInterface interface
+type HandlerInterface interface {
+	Create(c *gin.Context)
+}
+
+// New to create new instance of struct handler
 func New(repo repository.RepositoryInterface) handler {
 	return handler{repo: repo}
 }
