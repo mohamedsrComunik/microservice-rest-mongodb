@@ -20,4 +20,5 @@ func New(routerGroup *gin.RouterGroup, handler handler.HandlerInterface) router 
 
 func (rt router) SetRoutes() {
 	rt.routerGroup.POST("/user", rt.handler.Create)
+	rt.routerGroup.GET("/users", rt.handler.Get)
 }

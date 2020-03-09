@@ -19,6 +19,7 @@ type userRepo struct {
 //RepositoryInterface interface
 type RepositoryInterface interface {
 	Create(ctx context.Context, user model.User) (string, error)
+	GetAll(ctx context.Context) []model.User
 }
 
 //NewUserRepo to create new instance of userRepo with *mongo.Database
@@ -38,4 +39,25 @@ func (u userRepo) Create(ctx context.Context, user model.User) (string, error) {
 		return "", err
 	}
 	return res.InsertedID.(primitive.ObjectID).Hex(), nil
+}
+
+func (u userRepo) GetAll(ctx context.Context) []model.User {
+	c, err := u.db.Collection("user").Find(ctx, bson.D{})
+	defer c.Close(ctx)
+	var users []model.User
+	for c.Next(ctx) {
+		elem := &bson.D{}
+		if err = c.Decode(elem); err != nil {
+			return users
+		}
+		m := elem.Map()
+		t := model.User{
+			ID:         m["_id"].(primitive.ObjectID).Hex(),
+			CreatedAt:  helper.DataTimeToTime(m["createdAt"].(primitive.DateTime)),
+			ModifiedAt: helper.DataTimeToTime(m["modifiedAt"].(primitive.DateTime)),
+			UserName:   m["userName"].(string),
+		}
+		users = append(users, t)
+	}
+	return users
 }

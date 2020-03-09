@@ -16,6 +16,7 @@ type handler struct {
 // HandlerInterface interface
 type HandlerInterface interface {
 	Create(c *gin.Context)
+	Get(c *gin.Context)
 }
 
 // New to create new instance of struct handler
@@ -33,4 +34,8 @@ func (h handler) Create(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"id": id})
+}
+func (h handler) Get(c *gin.Context) {
+	users := h.repo.GetAll(c)
+	c.JSON(http.StatusFound, gin.H{"users": users})
 }
